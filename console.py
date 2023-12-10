@@ -114,48 +114,23 @@ class HBNBCommand(cmd.Cmd):
        <class>.update(<id>, <dictionary>)
         Update a class instance of a given id by adding or updating
         a given attribute key/value pair or dictionary."""
-        argl = parse(arg)
-        objdict = storage.all()
 
-        if len(argl) == 0:
-            print("** class name missing **")
-            return False
-        if argl[0] not in HBNBCommand.class_models:
-            print("** class doesn't exist **")
-            return False
-        if len(argl) == 1:
-            print("** instance id missing **")
-            return False
-        if "{}.{}".format(argl[0], argl[1]) not in objdict.keys():
-            print("** no instance found **")
-            return False
-        if len(argl) == 2:
-            print("** attribute name missing **")
-            return False
-        if len(argl) == 3:
-            try:
-                type(eval(argl[2])) != dict
-            except NameError:
-                print("** value missing **")
-                return False
+        args = parse(arg)
+        instance = storage.all()
+        if not vl.validate_class(self, args, True, instance):
+            return
+        if not vl.validate_attr(args):
+            return
+        CONSTANTS = ["id", "updated_at", "created_at"]
+        key = "{}.{}".format(args[0], args[1])
 
-        if len(argl) == 4:
-            obj = objdict["{}.{}".format(argl[0], argl[1])]
-            if argl[2] in obj.__class__.__dict__.keys():
-                valtype = type(obj.__class__.__dict__[argl[2]])
-                obj.__dict__[argl[2]] = valtype(argl[3])
-            else:
-                obj.__dict__[argl[2]] = argl[3]
-        elif type(eval(argl[2])) == dict:
-            obj = objdict["{}.{}".format(argl[0], argl[1])]
-            for k, v in eval(argl[2]).items():
-                if (k in obj.__class__.__dict__.keys() and
-                        type(obj.__class__.__dict__[k]) in {str, int, float}):
-                    valtype = type(obj.__class__.__dict__[k])
-                    obj.__dict__[k] = valtype(v)
-                else:
-                    obj.__dict__[k] = v
-        storage.save()
+        if not args[2] in CONSTANTS:
+            if not instance.get(args[2]):
+                instance[key].__dict__[args[2]] = args[3]
+            elif instance.get(args[2]):
+                if isinstance(instance.get(args[2]), (str, int, float)):
+                    instance[key].__dict__[args[2]] = args[3]
+            instance[key].save()
 
     def default(self, arg: str) -> None:
         """Default behavior for cmd module when input is invalid"""
