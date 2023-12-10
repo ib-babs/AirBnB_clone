@@ -80,7 +80,7 @@ class HBNBCommand(cmd.Cmd):
         helps.show_help()
 
     def do_destroy(self, arg):
-        args = arg.split()
+        args = parse(arg)
         instance = storage.all()
         if not vl.validate_class(self, args, True, instance):
             return
