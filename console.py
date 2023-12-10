@@ -1,8 +1,5 @@
 #!/usr/bin/python3
-"""Console Module
-HBNBCommand class is an entry point of the command interpreter
-This module controls all databases
-"""
+"""HBNBCommand class is an entry point of the command interpreter"""
 import cmd
 import re
 import helps
@@ -18,7 +15,10 @@ from models import storage
 
 
 class HBNBCommand(cmd.Cmd):
-    """Cmd subclass"""
+    """Defines the HolbertonBnB command interpreter.
+    Attributes:
+        prompt (str): The command prompt.
+    """
     class_models = {"BaseModel": BaseModel, "User": User, "Place": Place,
                     "State": State, "City": City,
                     "Amenity": Amenity, "Review": Review}
@@ -26,11 +26,11 @@ class HBNBCommand(cmd.Cmd):
     prompt = "(hbnb) "
 
     def do_EOF(self, line):
-        """"Quit command to exit the program\n"""
+        """EOF signal to exit the program."""
         return True
 
     def do_quit(self, line):
-        """Quit command to exit the program\n"""
+        """Quit command to exit the program."""
         return True
 
     def emptyline(self):

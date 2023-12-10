@@ -19,14 +19,14 @@ class ConsoleTestCase(unittest.TestCase):
 
     def test_EOF_help(self):
         EOF = output_interception("help EOF")
-        assert_msg(self, "End-Of-File command to exit the program", EOF)
+        assert_msg(self, "EOF signal to exit the program.", EOF)
 
     def test_quit(self):
         self.assertTrue(HB.do_quit, True)
 
     def test_quit_help(self):
         quit = output_interception("help quit")
-        assert_msg(self, "Quit command to exit the program", quit)
+        assert_msg(self, "Quit command to exit the program.", quit)
 
     def test_emptyLine(self):
         self.assertIsNone(HB.emptyline(self), None)
