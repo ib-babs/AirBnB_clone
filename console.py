@@ -1,12 +1,12 @@
 #!/usr/bin/python3
-"""
+"""Console Module
 HBNBCommand class is an entry point of the command interpreter
+This module controls all databases
 """
 import cmd
 import re
 import helps
 import shlex
-from unittest.mock import patch
 from models.base_model import BaseModel
 from models.user import User
 from models.place import Place
@@ -23,16 +23,16 @@ class_models = {"BaseModel": BaseModel, "User": User, "Place": Place,
 
 
 class HBNBCommand(cmd.Cmd):
-    """HBNBCommand definition"""
+    """Cmd subclass"""
 
     prompt = "(hbnb) "
 
     def do_EOF(self, line):
-        """End-Of-File command to exit the program"""
+        """"Quit command to exit the program\n"""
         return True
 
     def do_quit(self, line):
-        """Quit command to exit the program"""
+        """Quit command to exit the program\n"""
         return True
 
     def emptyline(self):
@@ -162,8 +162,6 @@ class HBNBCommand(cmd.Cmd):
 <dictionary representation>""")
                         return
                     rip_dict = rip_dict.group()
-                    # parse = [re.sub(r'[:",\']', "", i)
-                    #          for i in shlex.split(rip_dict) if len(i) > 0]
                     parse = [re.sub(r'["\',]', "", i.strip(" "))
                              for i in re.split(r"[:,]", rip_dict)
                              if len(i) > 0]
