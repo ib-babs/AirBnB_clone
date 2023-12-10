@@ -1,0 +1,5 @@
+# srch = re.search(r'(?<=["\(]).*[^"\)]', line)
+# validate_id(srch)
+# srch = srch.group()
+# sub_check = re.sub(r'"|,|\'', "", srch)
+# matched = "{} {}".format(initial_key, sub_check)
