@@ -17,13 +17,11 @@ from models.review import Review
 from models import storage
 
 
-class_models = {"BaseModel": BaseModel, "User": User, "Place": Place,
-                "State": State, "City": City,
-                "Amenity": Amenity, "Review": Review}
-
-
 class HBNBCommand(cmd.Cmd):
     """Cmd subclass"""
+    class_models = {"BaseModel": BaseModel, "User": User, "Place": Place,
+                    "State": State, "City": City,
+                    "Amenity": Amenity, "Review": Review}
 
     prompt = "(hbnb) "
 
@@ -40,9 +38,9 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, arg):
         args = arg.split()
-        if not validate_class(args):
+        if not self.validate_class(args):
             return
-        new_model = class_models[args[0]]()
+        new_model = self.class_models[args[0]]()
         new_model.save()
         print(new_model.id)
 
@@ -53,7 +51,7 @@ class HBNBCommand(cmd.Cmd):
         args = arg.split()
 
         instance = storage.all()
-        if not validate_class(args, True, instance):
+        if not self.validate_class(args, True, instance):
             return
         key = "{}.{}".format(args[0], args[1])
         print(instance[key])
@@ -64,7 +62,7 @@ class HBNBCommand(cmd.Cmd):
     def do_destroy(self, arg):
         args = arg.split()
         instance = storage.all()
-        if not validate_class(args, True, instance):
+        if not self.validate_class(args, True, instance):
             return
         key = "{}.{}".format(args[0], args[1])
         del instance[key]
@@ -77,12 +75,12 @@ class HBNBCommand(cmd.Cmd):
         args = arg.split()
         instance = storage.all()
         if len(args) > 0:
-            if args[0] not in class_models.keys():
+            if args[0] not in self.class_models.keys():
                 print("** class doesn't exist **")
             else:
                 initial_key = args[0]
-                validate_cmd(instance, chk_lst=True,
-                             key=initial_key, string_list=True)
+                self.validate_cmd(instance, chk_lst=True,
+                                  key=initial_key, string_list=True)
 
         elif len(args) == 0:
             print([str(val) for val in instance.values()])
@@ -93,9 +91,9 @@ class HBNBCommand(cmd.Cmd):
     def do_update(self, arg):
         args = shlex.split(arg)
         instance = storage.all()
-        if not validate_class(args, True, instance):
+        if not self.validate_class(args, True, instance):
             return
-        if not validate_attr(args):
+        if not self.validate_attr(args):
             return
         CONSTANTS = ["id", "updated_at", "created_at"]
         key = "{}.{}".format(args[0], args[1])
@@ -121,39 +119,39 @@ class HBNBCommand(cmd.Cmd):
             method = method.group().replace("(", "")
             match(method):
                 case "all":
-                    validate_cmd(instance, chk_lst=True, key=initial_key)
+                    self.validate_cmd(instance, chk_lst=True, key=initial_key)
                     return
 
                 case "count":
-                    validate_cmd(instance, cnt=True, key=initial_key)
+                    self.validate_cmd(instance, cnt=True, key=initial_key)
                     return
 
                 case "show":
                     re_key = reuse_id.search(line)
-                    if not validate_class([initial_key, re_key]):
+                    if not self.validate_class([initial_key, re_key]):
                         return
-                    if not validate_id(re_key):
+                    if not self.validate_id(re_key):
                         return
                     re_key = re_key.group().replace('"', "")
                     return self.do_show(initial_key+" "+re_key)
 
                 case "destroy":
                     id = reuse_id.search(line)
-                    if not validate_id(id):
+                    if not self.validate_id(id):
                         return
                     id = id.group().replace('"', "")
                     return self.do_destroy(f"{initial_key} {id}")
 
                 case "update":
                     id = re.search(r'(?<=["\(]).*[\{,\)].', line)
-                    if not validate_class([initial_key, id]):
+                    if not self.validate_class([initial_key, id]):
                         return
-                    if not validate_id(id):
+                    if not self.validate_id(id):
                         return
                     id = re.sub(r'[",\{\} \)]', "", id.group())
 
-                    if not validate_class([initial_key, id[:36]],
-                                          True, instance):
+                    if not self.validate_class([initial_key, id[:36]],
+                                               True, instance):
                         return
                     rip_dict = re.search(r"(?<=\{).*[^\}\)]", line)
                     if not rip_dict:
@@ -181,7 +179,7 @@ class HBNBCommand(cmd.Cmd):
                         return
                     elif len(parse) % 2 == 1:
                         args = [initial_key, id[:36], parse[0]]
-                        if not validate_attr(args):
+                        if not self.validate_attr(args):
                             return
 
         return super().default(line)
@@ -189,62 +187,59 @@ class HBNBCommand(cmd.Cmd):
     def help_update(self):
         helps.update_help()
 
-
-def validate_class(args, check_id=False, instance={}):
-    if len(args) < 1:
-        print("** class name missing **")
-        return False
-    if args[0] not in class_models.keys():
-        print("** class doesn't exist **")
-        return False
-    if len(args) < 2 and check_id:
-        print("** instance id missing **")
-        return False
-    if len(instance) > 0 and len(args) > 1 and args[1] is not None:
-        key = "{}.{}".format(args[0], args[1])
-        if not instance.get(key):
-            print("** no instance found **")
+    def validate_class(self, args, check_id=False, instance={}):
+        if len(args) < 1:
+            print("** class name missing **")
             return False
-    return True
+        if args[0] not in self.class_models.keys():
+            print("** class doesn't exist **")
+            return False
+        if len(args) < 2 and check_id:
+            print("** instance id missing **")
+            return False
+        if len(instance) > 0 and len(args) > 1 and args[1] is not None:
+            key = "{}.{}".format(args[0], args[1])
+            if not instance.get(key):
+                print("** no instance found **")
+                return False
+        return True
 
+    def validate_attr(self, args):
+        if len(args) == 2:
+            print("** attribute name missing **")
+            return False
+        elif len(args) == 3:
+            print("** value missing **")
+            return False
 
-def validate_attr(args):
-    if len(args) == 2:
-        print("** attribute name missing **")
-        return False
-    elif len(args) == 3:
-        print("** value missing **")
-        return False
+        return True
 
-    return True
+    def validate_cmd(self, inst={}, chk_lst=False,
+                     cnt=False, key="", string_list=False):
+        count = 0
+        append_cls_list = []
+        if self.class_models.get(key):
+            for k in inst.keys():
+                key_match = re.fullmatch(fr"{key}.*", k)
+                if key_match is not None:
+                    key_match = key_match.group()
+                    if string_list:
+                        append_cls_list.append(str(inst[key_match]))
+                    else:
+                        append_cls_list.append(inst[key_match])
+                    count += 1
+            if chk_lst:
+                print(append_cls_list)
+                return
+            else:
+                print(count)
+                return
 
-
-def validate_cmd(inst={}, chk_lst=False, cnt=False, key="", string_list=False):
-    count = 0
-    append_cls_list = []
-    if class_models.get(key):
-        for k in inst.keys():
-            key_match = re.fullmatch(fr"{key}.*", k)
-            if key_match is not None:
-                key_match = key_match.group()
-                if string_list:
-                    append_cls_list.append(str(inst[key_match]))
-                else:
-                    append_cls_list.append(inst[key_match])
-                count += 1
-        if chk_lst:
-            print(append_cls_list)
-            return
-        else:
-            print(count)
-            return
-
-
-def validate_id(word):
-    if word is None:
-        print("** instance id missing **")
-        return False
-    return True
+    def validate_id(self, word):
+        if word is None:
+            print("** instance id missing **")
+            return False
+        return True
 
 
 if __name__ == '__main__':
