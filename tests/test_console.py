@@ -74,7 +74,7 @@ class ConsoleTestCase(unittest.TestCase):
     def test_update_help(self):
         update = output_interception("help update")
         assert_msg(
-            self, helps.update, update)
+            self, helps.update1, update)
 
     def test_class_show(self):
         validate_cmd(self, "Use.show()", "User.show()", "User.show(10)")

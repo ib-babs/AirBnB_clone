@@ -10,7 +10,11 @@ destroy = "`destroy` method destroy instance of classname"
 
 all = "`all` method display instances based on `classname`"
 
-update = "`update` method update instance based on `classname`, `id`,"
+update1 = """update <class name> <id>
+ <attribute name> "<attribute value>\""""
+
+update2 = """Usage: <class name>.update(<id>, 
+<dictionary representation>"""
 
 
 def create_help():
@@ -30,4 +34,4 @@ def all_help():
 
 
 def update_help():
-    print(update)
+    print(update1)

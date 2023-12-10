@@ -145,7 +145,8 @@ class HBNBCommand(cmd.Cmd):
                     return self.do_destroy(f"{initial_key} {id}")
 
                 case "update":
-                    """Usage: <class name>.update(<id>, <dictionary representation>"""
+                    """Usage: <class name>.update(<id>,
+<dictionary representation>"""
                     id = re.search(r'(?<=["\(]).*[\{,\)].', line)
                     if not vl.validate_class(self, [initial_key, id]):
                         return
