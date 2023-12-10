@@ -68,13 +68,22 @@ class HBNBCommand(cmd.Cmd):
         helps.create_help()
 
     def do_show(self, arg):
-        args = arg.split()
+        args = parse(arg)
 
         instance = storage.all()
-        if not vl.validate_class(self, args, True, instance):
+        if len(args) == 0:
+            print("** class name missing **")
             return
-        key = "{}.{}".format(args[0], args[1])
-        print(instance[key])
+        elif args[0] not in self.class_models.keys():
+            print("** class doesn't exist **")
+        elif len(args) == 1:
+            print("** instance id missing **")
+        elif len(instance) > 0 and len(args) > 1:
+            key = "{}.{}".format(args[0], args[1])
+            if not instance.get(key):
+                print("** no instance found **")
+            else:
+                print(instance[key])
 
     def help_show(self):
         helps.show_help()
@@ -82,21 +91,21 @@ class HBNBCommand(cmd.Cmd):
     def do_destroy(self, arg):
         args = parse(arg)
         instance = storage.all()
-        if len(args) < 1:
+        if len(args) == 0:
             print("** class name missing **")
             return
         elif args[0] not in self.class_models.keys():
             print("** class doesn't exist **")
-        elif len(args) < 2:
+        elif len(args) == 1:
             print("** instance id missing **")
         elif len(instance) > 0 and len(args) > 1:
             key = "{}.{}".format(args[0], args[1])
             if not instance.get(key):
                 print("** no instance found **")
-        else:
-            key = "{}.{}".format(args[0], args[1])
-            del instance[key]
-            storage.save()
+            else:
+                key = "{}.{}".format(args[0], args[1])
+                del instance[key]
+                storage.save()
 
     def help_destroy(self):
         helps.destroy_help()
