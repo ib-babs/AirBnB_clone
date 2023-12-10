@@ -15,6 +15,24 @@ from models import storage
 import validators as vl
 
 
+def parse(arg):
+    curly_braces = re.search(r"\{(.*?)\}", arg)
+    brackets = re.search(r"\[(.*?)\]", arg)
+    if curly_braces is None:
+        if brackets is None:
+            return [i.strip(",") for i in shlex.split(arg)]
+        else:
+            lexer = shlex.split(arg[:brackets.span()[0]])
+            retl = [i.strip(",") for i in lexer]
+            retl.append(brackets.group())
+            return retl
+    else:
+        lexer = shlex.split(arg[:curly_braces.span()[0]])
+        retl = [i.strip(",") for i in lexer]
+        retl.append(curly_braces.group())
+        return retl
+
+
 class HBNBCommand(cmd.Cmd):
     """Defines the HolbertonBnB command interpreter.
     Attributes:
@@ -28,6 +46,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_EOF(self, line):
         """EOF signal to exit the program."""
+        print("")
         return True
 
     def do_quit(self, line):
@@ -107,87 +126,39 @@ class HBNBCommand(cmd.Cmd):
                     instance[key].__dict__[args[2]] = args[3]
             instance[key].save()
 
-    def default(self, line: str) -> None:
-        instance = storage.all()
-        reuse_class = re.compile(r".*\.")
-        reuse_id = re.compile(r'(?<=["\(]).*[^"\)]')
-        initial_cmd = line.split()[0]
-        initial_key = reuse_class.match(initial_cmd)
-        method = re.search(r"(?<=\.).*\(",  line)
-
-        if initial_key and method:
-            initial_key = initial_key.group().replace(".", "")
-            method = method.group().replace("(", "")
-            match(method):
-                case "all":
-                    vl.validate_cmd(
-                        self, instance, chk_lst=True, key=initial_key)
-                    return
-
-                case "count":
-                    vl.validate_cmd(self, instance, cnt=True, key=initial_key)
-                    return
-
-                case "show":
-                    re_key = reuse_id.search(line)
-                    if not vl.validate_class(self, [initial_key, re_key]):
-                        return
-                    if not vl.validate_id(re_key):
-                        return
-                    re_key = re_key.group().replace('"', "")
-                    return self.do_show(initial_key+" "+re_key)
-
-                case "destroy":
-                    id = reuse_id.search(line)
-                    if not vl.validate_id(id):
-                        return
-                    id = id.group().replace('"', "")
-                    return self.do_destroy(f"{initial_key} {id}")
-
-                case "update":
-                    """Usage: <class name>.update(<id>,
-<dictionary representation>"""
-                    id = re.search(r'(?<=["\(]).*[\{,\)].', line)
-                    if not vl.validate_class(self, [initial_key, id]):
-                        return
-                    if not vl.validate_id(id):
-                        return
-                    id = re.sub(r'[",\{\} \)]', "", id.group())
-
-                    if not vl.validate_class(self, [initial_key, id[:36]],
-                                             True, instance):
-                        return
-                    rip_dict = re.search(r"(?<=\{).*[^\}\)]", line)
-                    if not rip_dict:
-                        print("** attribute name missing **")
-                        return
-                    rip_dict = rip_dict.group()
-                    parse = [re.sub(r'["\',]', "", i.strip(" "))
-                             for i in re.split(r"[:,]", rip_dict)
-                             if len(i) > 0]
-                    try:
-                        parse.remove("")
-                    except Exception as e:
-                        pass
-
-                    if len(parse) % 2 == 0:
-                        i = 0
-                        while i < len(parse):
-                            if i < len(parse) - 1:
-                                args = f"""{initial_key} {id[:36]}
-                                '{parse[i]}' '{parse[i+1]}'"""
-                                self.do_update(args)
-                                i += 2
-                        return
-                    elif len(parse) % 2 == 1:
-                        args = [initial_key, id[:36], parse[0]]
-                        if not vl.validate_attr(args):
-                            return
-
-        return super().default(line)
+    def default(self, arg: str) -> None:
+        """Default behavior for cmd module when input is invalid"""
+        argdict = {
+            "all": self.do_all,
+            "show": self.do_show,
+            "destroy": self.do_destroy,
+            "count": self.do_count,
+            "update": self.do_update
+        }
+        match = re.search(r"\.", arg)
+        if match is not None:
+            argl = [arg[:match.span()[0]], arg[match.span()[1]:]]
+            match = re.search(r"\((.*?)\)", argl[1])
+            if match is not None:
+                command = [argl[1][:match.span()[0]], match.group()[1:-1]]
+                if command[0] in argdict.keys():
+                    call = "{} {}".format(argl[0], command[1])
+                    return argdict[command[0]](call)
+        print("*** Unknown syntax: {}".format(arg))
+        return False
 
     def help_update(self):
         helps.update_help()
+
+    def do_count(self, arg):
+        """Usage: count <class> or <class>.count()
+        Retrieve the number of instances of a given class."""
+        argl = parse(arg)
+        count = 0
+        for obj in storage.all().values():
+            if argl[0] == obj.__class__.__name__:
+                count += 1
+        print(count)
 
 
 if __name__ == '__main__':
