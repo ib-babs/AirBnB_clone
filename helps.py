@@ -13,7 +13,7 @@ all = "`all` method display instances based on `classname`"
 update1 = """update <class name> <id>
  <attribute name> "<attribute value>\""""
 
-update2 = """Usage: <class name>.update(<id>, 
+update2 = """Usage: <class name>.update(<id>,
 <dictionary representation>"""
 
 
