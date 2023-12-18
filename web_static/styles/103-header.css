@@ -1,0 +1,15 @@
+header {
+  background-color: white;
+  height: 70px;
+  width: 100%;
+  border-bottom: 1px solid #cccccc;
+  background: url("../images/holberton.png") no-repeat;
+  background-position: 20px center;
+}
+
+@media (320px <= width <= 768px) {
+  header {
+    height: clamp(40px, 762px, 45px);
+    background-size: clamp(80px, 762px, 85px);
+  }
+}

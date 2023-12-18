@@ -1,0 +1,105 @@
+.filters {
+  background-color: white;
+  height: 70px;
+  width: 100%;
+  border: 1px solid #dddddd;
+  border-radius: 4px;
+  position: relative;
+  display: flex;
+}
+
+.filters button {
+  font-size: 18px;
+  background-color: #ff5a5f;
+  color: #ffffff;
+  height: 48px;
+  width: 20%;
+  border: none;
+  border-radius: 4px;
+  position: absolute;
+  right: 30px;
+  place-self: center;
+}
+
+.filters button:hover {
+  opacity: 90%;
+}
+.container .filters .amenities,
+.container .filters .locations {
+  height: 100%;
+  width: 25%;
+}
+.locations {
+  border-right: 1px solid #dddddd;
+}
+
+.container .locations h3,
+.container .amenities h3 {
+  margin-bottom: 0;
+  font-weight: 600;
+  margin-left: 40px;
+}
+
+.container .locations h4,
+.container .amenities h4 {
+  margin-top: 0;
+  font-weight: 400;
+  font-size: 14px;
+  margin-left: 40px;
+}
+
+.popover {
+  background-color: #fafafa;
+  border: 1px solid #dddddd;
+  border-radius: 4px;
+  display: none;
+}
+.popover h2 {
+  font-size: 16px;
+  margin-bottom: 0;
+}
+ul {
+  list-style: none;
+}
+.container .locations:hover .popover,
+.container .amenities:hover .popover {
+  display: grid;
+  place-content: center;
+}
+
+@media (320px <= width <= 768px) {
+  .filters {
+    height: calc(50px + 1vw);
+  }
+  .filters button {
+    font-size: clamp(10px, 700px, 14px);
+    height: clamp(20px, 100%, 30px);
+    right: 15px;
+  }
+  .container .filters .amenities,
+  .container .filters .locations {
+    width: 30%;
+  }
+  .container .locations h3,
+  .container .amenities h3 {
+    font-weight: 550;
+    margin-left: 10px;
+  }
+  .container .locations h4,
+  .container .amenities h4 {
+    font-weight: 400;
+    font-size: clamp(9px, 762px, 10px);
+    margin-left: 10px;
+  }
+  .popover h2 {
+    font-size: clamp(10px, 762px, 12px);
+  }
+  .popover {
+    padding-top: 1em;
+    padding-bottom: 1em;
+    padding-left: 5px;
+  }
+  .popover ul li {
+    margin-left: -15px;
+  }
+}

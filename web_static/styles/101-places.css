@@ -1,0 +1,116 @@
+.places .u_places {
+    display: flex;
+    flex-flow: wrap;
+    justify-content: center;
+  }
+  .places h1 {
+    font-size: 30px;
+    margin-bottom: 0;
+  }
+  .places article {
+    position: relative;
+    width: 390px;
+    padding: 20px;
+    margin: 20px;
+    border: 1px solid #ff5a5f;
+    border-radius: 4px;
+  }
+  .places article > h2 {
+    font-size: 30px;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 1.2em;
+  }
+  .places article .price_by_night {
+    color: #ff5a5f;
+    border: 4px solid #ff5a5f;
+    border-radius: 35px;
+    min-width: 60px;
+    height: 60px;
+    font-size: 30px;
+    display: grid;
+    place-content: center;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+  }
+  
+  .information {
+    height: 80px;
+    border-top: 1px solid #dddddd;
+    border-bottom: 1px solid #dddddd;
+    display: flex;
+  }
+  .max_guest,
+  .number_rooms,
+  .number_bathrooms {
+    width: 120px;
+  }
+  .text {
+    font-weight: 540;
+  }
+  .guest_image,
+  .room_image,
+  .bathroom_image {
+    width: 60px;
+    height: 50px;
+  }
+  .guest_image {
+    background: url("../images/guest.png") no-repeat;
+    background-size: 90%;
+  }
+  
+  .room_image {
+    background: url("../images/bedrooms.png") no-repeat;
+    background-size: 90%;
+  }
+  .bathroom_image {
+    background: url("../images/bathrooms.png") no-repeat;
+    background-size: 90%;
+  }
+  
+  .places .amenities {
+    margin-top: 40px;
+  }
+  .places .amenities h2,
+  .places .reviews h2 {
+    font-size: 16px;
+    border-bottom: 1px solid #dddddd;
+  }
+  
+  .places .amenities .amenities_list {
+    display: flex;
+    padding: 5px 0 5px 0;
+    gap: 0.6em;
+  }
+  .tv_img,
+  .pet_img,
+  .wifi_img {
+    width: 25px;
+    height: 25px;
+    margin-top: -5px;
+  }
+  .tv_img {
+    background: url("../images/tv.png") no-repeat;
+    background-size: 90%;
+  }
+  .pet_img {
+    background: url("../images/pet.png") no-repeat;
+    background-size: 90%;
+  }
+  .wifi_img {
+    background: url("../images/wifi.png") no-repeat;
+    background-size: 90%;
+  }
+  .places .reviews p {
+    font-size: 12px;
+    margin-top: 0;
+  }
+  .places .reviews ul li h3 {
+    margin-bottom: 0;
+    font-size: 14px;
+  }
+  .places .reviews ul {
+    padding: 0;
+  }
+  
